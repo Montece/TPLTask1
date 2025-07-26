@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TPLTask.Utility\TPLTask.Utility.csproj" />
-    <ProjectReference Include="..\TPLTask1.Calculation\TPLTask1.Calculation.csproj" />
+    <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
   </ItemGroup>
 
 </Project>
