@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TPLTask1.Executable": {
+      "commandName": "Project",
+      "commandLineArgs": "531"
+    }
+  }
+}

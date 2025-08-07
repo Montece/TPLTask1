@@ -1,12 +1,12 @@
 ﻿using JetBrains.Annotations;
 
-namespace TPLTask1;
+namespace TPLTask1.Calculation;
 
 /// <summary>
 /// Ряд Лейбница: SUM += 1 / (1 + 2 * n) * (-1)^n
 /// </summary>
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-public sealed class LeibnizSeriesCalculatorInfinity
+public sealed class LeibnizSeriesCalculatorInfinity : IDisposable
 {
     private CancellationTokenSource _cts = new();
     private double _currentValue;
@@ -110,11 +110,16 @@ public sealed class LeibnizSeriesCalculatorInfinity
 
     public double CalculateIteration(int x)
     {
-        return 1d / (1d + 2d * x) * Math.Pow(-1, x);
+        return ((x & 1) == 0 ? 1d : -1d) / (1d + 2d * x);
     }
 
     public double AfterCalculate(double endValue)
     {
         return endValue * 4;
+    }
+
+    public void Dispose()
+    {
+        _cts.Dispose();
     }
 }

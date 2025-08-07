@@ -5,6 +5,10 @@ VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPLTask1", "TPLTask1\TPLTask1.csproj", "{B7B9E218-9091-47F6-A99F-E3B30EB1643F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPLTask1.Calculation", "TPLTask1.Calculation\TPLTask1.Calculation.csproj", "{2113E12C-672C-4653-B3FF-B5D094240D59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPLTask1.Executable", "TPLTask1.Executable\TPLTask1.Executable.csproj", "{18891A38-BCAF-45CF-A298-849844D50C06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{B7B9E218-9091-47F6-A99F-E3B30EB1643F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7B9E218-9091-47F6-A99F-E3B30EB1643F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7B9E218-9091-47F6-A99F-E3B30EB1643F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2113E12C-672C-4653-B3FF-B5D094240D59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2113E12C-672C-4653-B3FF-B5D094240D59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2113E12C-672C-4653-B3FF-B5D094240D59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2113E12C-672C-4653-B3FF-B5D094240D59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18891A38-BCAF-45CF-A298-849844D50C06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18891A38-BCAF-45CF-A298-849844D50C06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18891A38-BCAF-45CF-A298-849844D50C06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18891A38-BCAF-45CF-A298-849844D50C06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
