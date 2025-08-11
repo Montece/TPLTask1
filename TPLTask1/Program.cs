@@ -29,6 +29,8 @@ internal sealed class Program
             piRecords.Add(piRecord);
         }*/
 
+
+
         for (var i = 1; i <= 100; i++)
         {
             var piRecord = CalculatePi(i);
