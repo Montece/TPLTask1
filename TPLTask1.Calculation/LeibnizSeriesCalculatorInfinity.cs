@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using System.Collections.Concurrent;
 
 namespace TPLTask1.Calculation;
 
@@ -10,105 +11,87 @@ public sealed class LeibnizSeriesCalculatorInfinity : IDisposable
 {
     private CancellationTokenSource _cts = new();
     private double _currentValue;
-    private object _currentValueLock = new();
-    private bool[]? _threadsStatuses;
-    private object _threadsStatusesLock = new();
+    private Thread _calculateThread;
 
-    public void BeginCalculate(int threadsCount)
+    public LeibnizSeriesCalculatorInfinity()
     {
-        var stepX = 100;
-        var startX = 0;
-
-        new Thread(() =>
+        _calculateThread = new(threadsCountObject =>
         {
+            var threadsCount = (int)threadsCountObject!;
+
+            var startX = 0;
+            var stepX = 100;
+
             while (!_cts.IsCancellationRequested)
             {
-                var threads = new Thread[threadsCount];
+                var threads = new Thread?[threadsCount];
+                var values = new double[threadsCount];
 
-                lock (_threadsStatusesLock)
+                var chunk = (stepX + threadsCount - 1) / threadsCount;
+                var chunks = Partitioner.Create(startX, startX + stepX, chunk).GetDynamicPartitions().ToList();
+
+                for (var threadId = 0; threadId < chunks.Count; threadId++)
                 {
-                    _threadsStatuses = new bool[threadsCount];
-                }
-
-                for (var threadId = 0; threadId < threadsCount; threadId++)
-                {
-                    var step = stepX / threadsCount;
-                    var offset = startX + threadId * step;
-
-                    var thread = new Thread(id =>
+                    var startInfo = new StartInfo
                     {
-                        CalculateFormulaRange(offset, offset + step, ref _currentValueLock, ref _currentValue);
+                        ThreadId = threadId,
+                        StartLocalX = chunks[threadId].Item1,
+                        EndLocalX = chunks[threadId].Item2 - 1
+                    };
 
-                        lock (_threadsStatusesLock)
-                        {
-                            _threadsStatuses[(int)id!] = true;
-                        }
+                    var thread = new Thread(__startInfo =>
+                    {
+                        var _startInfo = (StartInfo)__startInfo!;
+
+                        var sum = CalculateFormulaRange(_startInfo.StartLocalX, _startInfo.EndLocalX);
+
+                        values[_startInfo.ThreadId] = sum;
                     });
 
                     threads[threadId] = thread;
-                    thread.Start(threadId);
+                    thread.Start(startInfo);
                 }
 
-                while (true)
+                foreach (var thread in threads)
                 {
-                    lock (_threadsStatusesLock)
-                    {
-                        if (_threadsStatuses.All(x => x))
-                        {
-                            break;
-                        }
-
-                        Thread.Sleep(10);
-                    }
+                    thread?.Join();
                 }
+
+                _currentValue += values.Sum();
 
                 startX += stepX;
             }
-        }).Start();
+        });
+    }
+
+    public void BeginCalculate(int threadsCount)
+    {
+        _calculateThread.Start(threadsCount);
     }
 
     public double EndCalculate()
     {
         _cts.Cancel();
+        _calculateThread.Join();
 
-        while (true)
-        {
-            lock (_threadsStatusesLock)
-            {
-                if (_threadsStatuses!.All(x => x))
-                {
-                    break;
-                }
+        _currentValue = AfterCalculate(_currentValue);
 
-                Thread.Sleep(10);
-            }
-        }
-
-        lock (_currentValueLock)
-        {
-            _currentValue = AfterCalculate(_currentValue);
-
-            return _currentValue;
-        }
+        return _currentValue;
     }
 
-    private void CalculateFormulaRange(int startX, int endX, ref object sumLockObject, ref double sum)
+    private double CalculateFormulaRange(long startX, long endX)
     {
         var localSum = 0d;
 
-        for (var x = startX; x < endX; x++)
+        for (var x = startX; x <= endX; x++)
         {
-            // TODO Нужен ли lock для объекта, у которого вызывается метод с параметрами?
             localSum += CalculateIteration(x);
         }
 
-        lock (sumLockObject)
-        {
-            sum += localSum;
-        }
+        return localSum;
     }
 
-    public double CalculateIteration(int x)
+    public double CalculateIteration(long x)
     {
         return ((x & 1) == 0 ? 1d : -1d) / (1d + 2d * x);
     }
@@ -122,4 +105,11 @@ public sealed class LeibnizSeriesCalculatorInfinity : IDisposable
     {
         _cts.Dispose();
     }
+}
+
+public struct StartInfo
+{
+    public int ThreadId;
+    public long StartLocalX;
+    public long EndLocalX;
 }

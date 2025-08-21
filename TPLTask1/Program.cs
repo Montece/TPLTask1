@@ -29,9 +29,7 @@ internal sealed class Program
             piRecords.Add(piRecord);
         }*/
 
-
-
-        for (var i = 1; i <= 100; i++)
+        /*for (var i = 1; i <= 100; i++)
         {
             var piRecord = CalculatePi(i);
 
@@ -55,12 +53,15 @@ internal sealed class Program
         
         Console.WriteLine("Press ENTER to continue...");
         Console.ReadLine();
+        */
 
-        using var calculatorInfinity = new LeibnizSeriesCalculatorInfinity();
+        // Итератор
+        
+        /*using var calculatorInfinity = new LeibnizSeriesCalculatorInfinity();
         var stopwatch = new Stopwatch();
 
         stopwatch.Restart();
-        calculatorInfinity.BeginCalculate(10);
+        calculatorInfinity.BeginCalculate(17);
 
         Console.WriteLine("Calculating PI... Press ENTER to cancel...");
         Console.ReadLine();
@@ -70,7 +71,25 @@ internal sealed class Program
 
         var time = $"Time: {stopwatch.ElapsedMilliseconds:F}";
         Console.WriteLine($"{time,25} ms, PI: {pi_:F20}, Delta: {Math.Abs(pi_ - PI):F20}");
-        
+        */
+
+        for (var i = 1; i <= 30; i++)
+        {
+            using var calculatorInfinity = new LeibnizSeriesCalculatorInfinity();
+            var stopwatch = new Stopwatch();
+
+            stopwatch.Restart();
+            calculatorInfinity.BeginCalculate(i);
+
+            Thread.Sleep(10 * 1000);
+
+            var pi_ = calculatorInfinity.EndCalculate();
+            stopwatch.Stop();
+
+            var time = $"Time: {stopwatch.ElapsedMilliseconds:F}";
+            Console.WriteLine($"{time,25} ms, PI: {pi_:F20}, Delta: {Math.Abs(pi_ - PI):F20}");
+        }
+
         Console.WriteLine();
         Console.WriteLine("Press ENTER to exit...");
         Console.ReadLine();

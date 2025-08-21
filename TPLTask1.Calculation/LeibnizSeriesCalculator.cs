@@ -29,7 +29,6 @@ public sealed class LeibnizSeriesCalculator
         var step = rangeX / threadsCount;
         var threads = new Thread?[threadsCount];
         var values = new double[threadsCount];
-        var threadsStatuses = new bool[threadsCount];
 
         for (var threadId = 1; threadId < threadsCount; threadId++)
         {
@@ -39,10 +38,11 @@ public sealed class LeibnizSeriesCalculator
             {
                 var _threadId = (int)id!;
 
-                var sum = CalculateFormulaRange(offset, offset + step);
+                var start = offset;
+                var end = offset + step;
+                var sum = CalculateFormulaRange(start, end);
 
                 values[_threadId] = sum;
-                threadsStatuses[_threadId] = true;
             });
 
             threads[threadId] = thread;
@@ -50,7 +50,6 @@ public sealed class LeibnizSeriesCalculator
         }
         
         values[0] = CalculateFormulaRange(0, step);
-        threadsStatuses[0] = true;
 
         foreach (var thread in threads)
         {
@@ -68,7 +67,7 @@ public sealed class LeibnizSeriesCalculator
     {
         var localSum = 0d;
 
-        for (var x = startX; x < endX; x++)
+        for (var x = startX; x <= endX; x++)
         {
             localSum += CalculateIteration(x);
         }
